@@ -70,7 +70,8 @@ function addModuleForumViewToElement(div, module){
 		accordionDiv.appendChild(headingTitle);
 		
 		var headingPreviewDiv = document.createElement("div");
-		headingPreviewDiv.innerHTML = "<p>" + module["CourseCode"] + " Some placeholding HTML. :-) </p>";
+		//headingPreviewDiv.innerHTML = "<p>" + module["CourseCode"] + " Some placeholding HTML. :-) </p>";
+		addThreadsToElement(headingPreviewDiv, heading.threads, 0);
 		headingPreviewDiv.id = headingID + "-preview-div";
 		headingPreviewDiv.style.height = 100;
 		accordionDiv.appendChild(headingPreviewDiv);
@@ -79,6 +80,39 @@ function addModuleForumViewToElement(div, module){
 		//div.appendChild(document.createElement("br"));
 	}
 }
+
+
+
+function addThreadsToElement(div, threads, indentLevel){
+	for(var i = 0; i < threads.length; i++){
+		addThreadToElement(div, threads[i], indentLevel);
+	}
+}
+
+
+
+function addThreadToElement(div, thread, indentLevel){
+	//{postbody: randomString(100), posttitle: "Thread title", postdate: "date when this was posted", poster: {Name: "John Brown"}, threads: []};
+	
+	//Again, use an accordion. Though I hope this doesn't look daft.
+	var accordionDiv = document.createElement("div");
+	accordionDiv.className = "accordion";
+	
+	var postTitle = document.createElement("h3");
+	postTitle.innerHTML = "<a href=\"#\">" + thread.posttitle + "</a>";
+	accordionDiv.appendChild(postTitle);
+	
+	var postPreviewDiv = document.createElement("div");
+	postPreviewDiv.innerHTML = thread.postbody; // "<p>" +  + "</p>";
+	for(var i = 0; i < thread.threads.length; i++){
+		addThreadsToElement(postPreviewDiv, thread.threads, indentLevel + 1);
+	}
+	
+	accordionDiv.appendChild(postPreviewDiv);
+	
+	div.appendChild(accordionDiv);
+}
+
 </script>
 
 <!-- For jQueryUI Tabs. -->
@@ -129,7 +163,18 @@ $(function() {
   });
   
 $( "#" + tabs_id ).bind( "tabsselect", function(event, ui) {
-  console.log("Select tab.." + ui.id);
+  var div = ui.panel;
+  
+  for(var i = 0; i < div.children.length; i++){
+    if(div.children[i].className.indexOf("accordion") >= 0){
+		var accordion = div.children[i];
+		
+		console.log("style height:"+ accordion.children[1].style.height);
+		if(+/(\d+)/.exec(accordion.children[1].style.height)[1] < 1){
+			accordion.children[1].style.height = 57; //ARBITRARY..
+		}
+	}
+  }
 });
   
 })();
