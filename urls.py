@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, include, url
-import IvleForums.views
+from IvleForums.views import *
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
