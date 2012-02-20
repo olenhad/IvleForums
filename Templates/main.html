@@ -4,14 +4,14 @@
 </head>
 <body>
 
-<link type="text/css" href="./css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="Stylesheet" />	
-<script src="jquery-1.7.1.min.js"></script>
-<script src="jquery-ui-1.8.17.custom.min.js"></script>
+<link type="text/css" href="site_media/css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="Stylesheet" />	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 
 
 <p id="greeting_text"></p>
 <script>
-var username = "RICHARD JOHN PAUL GOULTER";
+var username = "{{username}}";
 document.getElementById("greeting_text").innerHTML = "Welcome " + username + ".";
 </script>
 
@@ -23,12 +23,13 @@ document.getElementById("greeting_text").innerHTML = "Welcome " + username + "."
 <!-- For jQueryUI Tabs. -->
 <script>
 //Hardcoded Module objects. To be replaced by template.
-var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d1317"},
+/*var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d1317"},
 				{"CourseCode": "CS2020", ID: "7d54f5c5-e147-4f3d-9b7f-931fcca9060d"},
 				{"CourseCode": "CS3234", ID: "b5eae887-f9b2-443e-af0b-b8fcd1aec34f"},
 				{"CourseCode": "GEM1004", ID: "d0b1bc5e-88d2-4bdc-8979-775762c7a667"},
 				{"CourseCode": "IS1103", ID: "99f4d934-4b2b-4228-8bae-d6b77b25d550"},
-				{"CourseCode": "ST2334", ID: "2ae73642-83f7-4002-bc35-0e2d4ca1f433"}];
+				{"CourseCode": "ST2334", ID: "2ae73642-83f7-4002-bc35-0e2d4ca1f433"}];*/
+var modules = {{modules}}
 
 function getStyleHeight(elem){
 	if(!elem.style.height) return 0;
@@ -69,7 +70,41 @@ function makeDumbThread(){
     return obj;
 }
 
-var forum = {title: "A Forum for a Module",
+/*var forum = {title: "A Forum for a Module",
+			 headings: [{title: "A Heading for a Forum", threads: []},
+						{title: "A Second Heading for a Forum", threads: makeDumbThreads(10)}]};*/
+var forum = {{forum}}
+
+function addModuleForumViewToElement(div, module){
+	if(!module.forum) module.forum = forum;
+	
+	var title = document.createElement("h2");
+	title.innerText = module.forum.title;
+	div.appendChild(title);
+	
+	for(var i = 0; i < module.forum.headings.length; i++){
+		var heading = module.forum.headings[i];
+		
+		//Make a single-category jQueryUI accordion for each heading.
+		var accordionDiv = document.createElement("div");
+		var headingID = module["CourseCode"] + "-" + forum.title + "-" + heading.title + i + "-accordion";
+		accordionDiv.id = headingID;
+		accordionDiv.className = "accordion";
+		
+		var headingTitle = document.createElement("h3");
+		headingTitle.innerHTML = "<a href=\"#\">" + heading.title + "</a>";
+		accordionDiv.appendChild(headingTitle);
+		
+		var headingPreviewDiv = document.createElement("div");
+		//headingPreviewDiv.innerHTML = "<p>" + module["CourseCode"] + " Some placeholding HTML. :-) </p>";
+		addThreadsToElement(headingPreviewDiv, heading.threads, 0);
+		headingPreviewDiv.id = headingID + "-preview-div";
+		headingPreviewDiv.style.height = 100;
+		accordionDiv.appendChild(headingPreviewDiv);
+		
+		div.appendChild(accordionDiv);
+		//div.appendChild(document.createElement("br"));
+	}
              headings: [{title: "A Heading for a Forum", threads: []},
                         {title: "A Second Heading for a Forum", threads: makeDumbThreads(10)}]};
 
@@ -119,6 +154,7 @@ function addModuleForumViewToElement(div, forum){
     $( ".accordion" ).accordion({
         collapsible: true
     });
+
 }
 
 
@@ -195,6 +231,19 @@ function makeThreadHTMLTitleStr(thread){
 
 <!-- For jQuery UIs -->
 <script>
+
+//Hardcoded Module objects. To be replaced by template.
+/*var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d1317"},
+				{"CourseCode": "CS2020", ID: "7d54f5c5-e147-4f3d-9b7f-931fcca9060d"},
+				{"CourseCode": "CS3234", ID: "b5eae887-f9b2-443e-af0b-b8fcd1aec34f"},
+				{"CourseCode": "GEM1004", ID: "d0b1bc5e-88d2-4bdc-8979-775762c7a667"},
+				{"CourseCode": "IS1103", ID: "99f4d934-4b2b-4228-8bae-d6b77b25d550"},
+				{"CourseCode": "ST2334", ID: "2ae73642-83f7-4002-bc35-0e2d4ca1f433"}];*/
+{% autoescape off %}
+var modules = {{modules}};
+{% endautoescape %}
+
+
 
 
 //Generate tabs

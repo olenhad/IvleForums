@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from IvleForums.views import *
+import settings
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -16,5 +17,8 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     (r'^login/$',login),
     (r'^main/$',main),
+    (r'^rmain/$',rmain),
+    (r'^main/site_media/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': 'C:/DjangoPrjects/IvleForums/Templates/'}),
 
 )
