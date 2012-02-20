@@ -24,8 +24,7 @@ def main(request):
 			forums[courseID] = forum
 			
 			
-				
-				
+		forums["num"] = len(parsedm)
 		forums_json=json.dumps(forums)
 		return render_to_response('Templates/main.html',{'username':username, 'modules':resultm,'forums':forums_json})
 	else:
@@ -51,7 +50,7 @@ def getForum(LAPIKey,Token,CourseID):
 	content = urllib2.urlopen(getForumURL)
 	forum_json_raw=content.read()
 	forum = json.loads(forum_json_raw)
-	return forum
+	return forum_json_raw #forum
 def postNewThread(LAPIKey,Token,HeadingID, Title, Body):
 	data = urllib.urlencode({'APIKey':'%s' %(LAPIKey),'AuthToken':'%s'%(Token),'HeadingID':'%s' %(HeadingID),'Title':'%s'%(Title),'Reply':'%s'%(Body)})
 	u = urllib2.urlopen("https://ivle.nus.edu.sg/api/Lapi.svc/Forum_PostNewThread_JSON",data)

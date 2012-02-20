@@ -19,6 +19,6 @@ urlpatterns = patterns('',
     (r'^main/$',main),
     (r'^rmain/$',rmain),
     (r'^main/site_media/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': 'C:/DjangoPrjects/IvleForums/Templates/'}),
+        {'document_root': 'C:/Users/Richard/IvleForums/Templates/'}),
 
 )
