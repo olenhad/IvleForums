@@ -15,8 +15,15 @@ def main(request):
 		modules = getModules(LAPIKey,Token)
 		parsedm=parseModule(modules)
 		resultm= json.dumps(parsedm)
-		#forum = 
-		return render_to_response('Templates/main.html',{'username':username, 'modules':resultm})
+		forums = []
+		i=0
+		for module in modules:
+			forums.append(module)
+			forums.append(getForum(LAPIKey,Token,module["ID"]))
+
+		
+		forums_json=json.dumps(forums)
+		return render_to_response('Templates/main.html',{'username':username, 'modules':resultm,'forums':forums_json})
 	else:
 		return HttpResponse("Not enough data")		
 

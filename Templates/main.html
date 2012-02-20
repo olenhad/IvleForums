@@ -23,12 +23,13 @@ document.getElementById("greeting_text").innerHTML = "Welcome " + username + "."
 <!-- For jQueryUI Tabs. -->
 <script>
 //Hardcoded Module objects. To be replaced by template.
-var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d1317"},
+/*var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d1317"},
 				{"CourseCode": "CS2020", ID: "7d54f5c5-e147-4f3d-9b7f-931fcca9060d"},
 				{"CourseCode": "CS3234", ID: "b5eae887-f9b2-443e-af0b-b8fcd1aec34f"},
 				{"CourseCode": "GEM1004", ID: "d0b1bc5e-88d2-4bdc-8979-775762c7a667"},
 				{"CourseCode": "IS1103", ID: "99f4d934-4b2b-4228-8bae-d6b77b25d550"},
-				{"CourseCode": "ST2334", ID: "2ae73642-83f7-4002-bc35-0e2d4ca1f433"}];
+				{"CourseCode": "ST2334", ID: "2ae73642-83f7-4002-bc35-0e2d4ca1f433"}];*/
+var modules = {{modules}}
 
 function getStyleHeight(elem){
 	if(!elem.style.height) return 0;
@@ -70,7 +71,6 @@ function makeDumbThread(){
 }
 
 var forum = {title: "A Forum for a Module",
-<<<<<<< HEAD
 			 headings: [{title: "A Heading for a Forum", threads: []},
 						{title: "A Second Heading for a Forum", threads: makeDumbThreads(10)}]};
 //var forum = {{forum}}
@@ -105,7 +105,6 @@ function addModuleForumViewToElement(div, module){
 		div.appendChild(accordionDiv);
 		//div.appendChild(document.createElement("br"));
 	}
-=======
              headings: [{title: "A Heading for a Forum", threads: []},
                         {title: "A Second Heading for a Forum", threads: makeDumbThreads(10)}]};
 
@@ -151,7 +150,7 @@ function addModuleForumViewToElement(div, forum){
     $( ".accordion" ).accordion({
         collapsible: true
     });
->>>>>>> origin/master
+
 }
 
 
@@ -196,7 +195,7 @@ function addThreadToElement(div, thread, indentLevel){
 
 <!-- For jQuery UIs -->
 <script>
-<<<<<<< HEAD
+
 //Hardcoded Module objects. To be replaced by template.
 /*var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d1317"},
 				{"CourseCode": "CS2020", ID: "7d54f5c5-e147-4f3d-9b7f-931fcca9060d"},
@@ -207,10 +206,10 @@ function addThreadToElement(div, thread, indentLevel){
 {% autoescape off %}
 var modules = {{modules}};
 {% endautoescape %}
-=======
 
 
->>>>>>> origin/master
+
+
 //Generate tabs
 (function (){
   var div = document.getElementById("forum_div");
