@@ -101,7 +101,11 @@ function addModuleForumViewToElement(div, forum){
         accordionDiv.className = "accordion";
         
         var headingTitle = document.createElement("h3");
-        headingTitle.innerHTML = "<a href=\"#\">" + heading.title + "</a>";
+        var a = document.createElement("a");
+        a.href = "#";
+        headingTitle.appendChild(a);
+        a.appendChild(createHeadingTitleElement(heading));
+        createHeadingTitleElement(heading);
         accordionDiv.appendChild(headingTitle);
         
         var headingPreviewDiv = document.createElement("div");
@@ -115,6 +119,33 @@ function addModuleForumViewToElement(div, forum){
     $( ".accordion" ).accordion({
         collapsible: true
     });
+}
+
+
+
+function createHeadingTitleElement(heading){
+    var div = document.createElement("div");
+    div.style.width = "100%";
+    
+    var left = document.createElement("span");
+    left.style.float = "left";
+    left.innerHTML = heading.title;
+    div.appendChild(left);
+    
+    var right = document.createElement("span");
+    right.style.float = "right";
+    right.style.fontSize = "80%";
+    div.appendChild(right);
+    
+    var newThreadBtn = document.createElement("button");
+    newThreadBtn.innerText = "New Thread";
+    newThreadBtn.addEventListener("mousedown", function(){ console.log("ACTION: New Thread.D"); return false; }, false);
+    newThreadBtn.addEventListener("mouseup", function(){ console.log("ACTION: New Thread.U"); return false; }, false);
+    right.appendChild(newThreadBtn);
+    var tmp = document.createElement("div");
+    tmp.style.clear = "both";
+    div.appendChild(tmp);
+    return div;
 }
 
 
@@ -136,7 +167,7 @@ function addThreadToElement(div, thread, indentLevel){
     accordionDiv.id = "accordion_" + thread.title + indentLevel;
     
     var postTitle = document.createElement("h3");
-    postTitle.innerHTML = "<a href=\"#\">" + thread.posttitle + "</a>";
+    postTitle.innerHTML = "<a href=\"#\">" + makeThreadHTMLTitleStr(thread) + "</a>";
     accordionDiv.appendChild(postTitle);
     
     var postPreviewDiv = document.createElement("div");
@@ -153,6 +184,11 @@ function addThreadToElement(div, thread, indentLevel){
     accordionDiv.appendChild(postPreviewDiv);
     
     div.appendChild(accordionDiv);
+}
+
+function makeThreadHTMLTitleStr(thread){
+    return thread.posttitle + " - <span style='color: black;'>posted by " + thread.poster.Name + "</span><br>" + 
+           "<i style='font-size: 50%;'>posted on " + thread.postdate + ".</i>";
 }
 
 </script>
@@ -191,13 +227,15 @@ function addThreadToElement(div, thread, indentLevel){
     //addModuleForumViewToElement(moduleDiv, module);
     a.onclick = (function(f){ return function(){
         return updateUIForForum(f);
-    }; })(forum);//module.forums[0]
+    }; })((module.forums && module.forums[0]) || forum);//module.forums[0]
     
     tabsDiv.appendChild(moduleDiv);
   }
   
   div.appendChild(tabsDiv);
   
+  //Ignores if user starts at a different link
+  updateUIForForum((modules[0].forums && modules[0].forums[0]) || forum);
   
 $(function() {
   $( "#" + tabs_id ).tabs({
@@ -219,6 +257,10 @@ $(function() {
 		collapsible: true
 	});
 });
+
+$(function() {
+        $( "button").button();
+    });
 </script>
 
 
@@ -232,7 +274,7 @@ function makeReplyDiv(){
     var text = document.createElement("textarea");
     text.id = "reply_div_input";
     text.rows = 3;
-    text.cols = 30;
+    text.cols = 75;
     div.appendChild(text);
     
     var postBtn = document.createElement("input");
@@ -272,7 +314,6 @@ function ensureReplyDiv(parent){
         console.log("No need to make new reply div");
     }
 }
-
 </script>
 
 </body>
