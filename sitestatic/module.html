@@ -1,0 +1,33 @@
+<html>
+  <head><title>ModuleForms View</title></head>
+  <body>
+  <script>
+    //Load commands from GET into dictionary search
+	var search = function () {
+		var p = window.location.search.substr(1).split(/\&/), l = p.length, kv, r = {};
+		while (l--) {
+			kv = p[l].split(/\=/);
+			r[kv[0]] = kv[1] || true; //if no =value just set it as true
+		}
+		return r;
+	} ();
+  </script>
+  
+  Some stuff.
+  <script>
+  document.writeln(search["CourseCode"]);
+  </script>
+  
+  <script>
+  // Noob code.
+  var x = (window["temporary_variable_in_parent_frame"] || "Not found");
+  document.writeln("<br>" + x);
+  var x = (parent + ", " + parent["temporary_variable_in_parent_frame"] || "Not found");
+  document.writeln("<br>" + x);
+  var x = (parent.temporary_variable_in_parent_frame || "Not found");
+  document.writeln("<br>" + x);
+  //if(temporary_variable_in_parent_frame) console.log("Yes!");
+  console.log("in internal frame..");
+  </script>
+  </body>
+</html>
