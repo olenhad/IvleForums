@@ -15,13 +15,17 @@ def main(request):
 		modules = getModules(LAPIKey,Token)
 		parsedm=parseModule(modules)
 		resultm= json.dumps(parsedm)
-		forums = []
-		i=0
-		for module in modules:
-			forums.append(module)
-			forums.append(getForum(LAPIKey,Token,module["ID"]))
-
-		
+		forums = {}
+		for module in parsedm:
+			courseID=module["ID"]
+			forum = getForum(LAPIKey, Token, courseID)
+			#forums.update(module)
+			#forums.update(forum)
+			forums[courseID] = forum
+			
+			
+				
+				
 		forums_json=json.dumps(forums)
 		return render_to_response('Templates/main.html',{'username':username, 'modules':resultm,'forums':forums_json})
 	else:
@@ -43,7 +47,7 @@ def getModules(LAPIKey,Token):
 	modules = json.loads(modules_json_raw)
 	return modules
 def getForum(LAPIKey,Token,CourseID):
-	getForumURL="https://ivle.nus.edu.sg/api/Lapi.svc/Forums?APIKey=%s&AuthToken=%s&CourseID=%s&Duration=0&IncludeThreads=true&TitleOnly=false"%(LAPIKey,Token,CourseID)
+	getForumURL="https://ivle.nus.edu.sg/api/Lapi.svc/Forums?APIKey=%s&AuthToken=%s&CourseID=%s&Duration=0&IncludeThreads=true&TitleOnly=false&output=json"%(LAPIKey,Token,CourseID)
 	content = urllib2.urlopen(getForumURL)
 	forum_json_raw=content.read()
 	forum = json.loads(forum_json_raw)
