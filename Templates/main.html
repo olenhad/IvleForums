@@ -139,7 +139,7 @@ function createHeadingTitleElement(heading){
     
     var newThreadBtn = document.createElement("button");
     newThreadBtn.innerText = "New Thread";
-    newThreadBtn.addEventListener("mousedown", function(){ console.log("ACTION: New Thread.D"); return false; }, false);
+    newThreadBtn.addEventListener("mousedown", function(){ show_new_thread_dialog(); console.log("ACTION: New Thread.D"); return false; }, false);
     newThreadBtn.addEventListener("mouseup", function(){ console.log("ACTION: New Thread.U"); return false; }, false);
     right.appendChild(newThreadBtn);
     var tmp = document.createElement("div");
@@ -314,6 +314,50 @@ function ensureReplyDiv(parent){
         console.log("No need to make new reply div");
     }
 }
+
+
+function show_new_thread_dialog(){
+    $( "#dialog-form" ).dialog( "open" );
+}
+
+function post_new_thread(title, content){
+    console.log("POSTING NEW THREAD: " + title + ", CONTENT:" + content);
+}
+</script>
+
+<div id="dialog-form" title="Post New Thread">
+    <!--<p class="validateTips">All form fields are required.</p>-->
+
+    <form>
+    <fieldset>
+        <table>
+        <tr><td><label for="title">Title</label></td>
+            <td><input type="text" name="title" id="title" size="60" class="text ui-widget-content ui-corner-all" /></td></tr>
+        <tr><td valign="top"><label for="postcontent">Post:</label></td>
+            <td><textarea name="postcontent" rows="10" cols="60" id="postcontent" class="text ui-widget-content ui-corner-all"></textarea></td></tr>
+    </fieldset>
+    </form>
+</div>
+
+<script>
+$( "#dialog-form" ).dialog({
+    autoOpen: false,
+    height: 445,
+    width: 580,
+    modal: true,
+    buttons: {
+        "Post New Thread": function() {
+            post_new_thread($("#text").val(), $("#postcontent").val());
+            $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+            $( this ).dialog( "close" );
+        }
+    },
+    close: function() {
+        allFields.val( "" ).removeClass( "ui-state-error" );
+    }
+});
 </script>
 
 </body>
