@@ -8,8 +8,6 @@
 <script src="jquery-1.7.1.min.js"></script>
 <script src="jquery-ui-1.8.17.custom.min.js"></script>
 
-<script>var temporary_variable_in_parent_frame = "Yes!"; </script>
-
 
 <p id="greeting_text"></p>
 <script>
@@ -20,100 +18,7 @@ document.getElementById("greeting_text").innerHTML = "Welcome " + username + "."
 <div id="forum_div">
 </div>
 
-<script>
-function makeDumbThreads(num){
-	var tmp = []
-	for(var i = 0; i < num; i++)
-		tmp.push(makeDumbThread());
-	return tmp;
-}
-
-//For each tab div.
-function makeDumbThread(){
-	//Give it a long enough value and you'll have Shakespeare
-	function randomString(length){
-		if(length < 2)
-			return "abcdefghijklmnopqrstuvwxyz,. "[Math.floor(Math.random() * 29)];
-		else
-			return randomString(1) + randomString(length - 1);
-	}
-	
-	var obj = {postbody: randomString(100), posttitle: "Thread title", postdate: "date when this was posted", poster: {Name: "John Brown"}, threads: []};
-	if(Math.random() < 0.2){
-		obj.threads = makeDumbThreads(Math.floor(Math.random()*2)+1);
-	}
-	return obj;
-}
-
-var forum = {title: "A Forum for a Module",
-			 headings: [{title: "A Heading for a Forum", threads: []},
-						{title: "A Second Heading for a Forum", threads: makeDumbThreads(10)}]};
-
-function addModuleForumViewToElement(div, module){
-	if(!module.forum) module.forum = forum;
-	
-	var title = document.createElement("h2");
-	title.innerText = module.forum.title;
-	div.appendChild(title);
-	
-	for(var i = 0; i < module.forum.headings.length; i++){
-		var heading = module.forum.headings[i];
-		
-		//Make a single-category jQueryUI accordion for each heading.
-		var accordionDiv = document.createElement("div");
-		var headingID = module["CourseCode"] + "-" + forum.title + "-" + heading.title + i + "-accordion";
-		accordionDiv.id = headingID;
-		accordionDiv.className = "accordion";
-		
-		var headingTitle = document.createElement("h3");
-		headingTitle.innerHTML = "<a href=\"#\">" + heading.title + "</a>";
-		accordionDiv.appendChild(headingTitle);
-		
-		var headingPreviewDiv = document.createElement("div");
-		//headingPreviewDiv.innerHTML = "<p>" + module["CourseCode"] + " Some placeholding HTML. :-) </p>";
-		addThreadsToElement(headingPreviewDiv, heading.threads, 0);
-		headingPreviewDiv.id = headingID + "-preview-div";
-		headingPreviewDiv.style.height = 100;
-		accordionDiv.appendChild(headingPreviewDiv);
-		
-		div.appendChild(accordionDiv);
-		//div.appendChild(document.createElement("br"));
-	}
-}
-
-
-
-function addThreadsToElement(div, threads, indentLevel){
-	for(var i = 0; i < threads.length; i++){
-		addThreadToElement(div, threads[i], indentLevel);
-	}
-}
-
-
-
-function addThreadToElement(div, thread, indentLevel){
-	//{postbody: randomString(100), posttitle: "Thread title", postdate: "date when this was posted", poster: {Name: "John Brown"}, threads: []};
-	
-	//Again, use an accordion. Though I hope this doesn't look daft.
-	var accordionDiv = document.createElement("div");
-	accordionDiv.className = "accordion";
-	
-	var postTitle = document.createElement("h3");
-	postTitle.innerHTML = "<a href=\"#\">" + thread.posttitle + "</a>";
-	accordionDiv.appendChild(postTitle);
-	
-	var postPreviewDiv = document.createElement("div");
-	postPreviewDiv.innerHTML = thread.postbody; // "<p>" +  + "</p>";
-	for(var i = 0; i < thread.threads.length; i++){
-		addThreadsToElement(postPreviewDiv, thread.threads, indentLevel + 1);
-	}
-	
-	accordionDiv.appendChild(postPreviewDiv);
-	
-	div.appendChild(accordionDiv);
-}
-
-</script>
+<div id="forum_post_div"></div>
 
 <!-- For jQueryUI Tabs. -->
 <script>
@@ -124,6 +29,137 @@ var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d13
 				{"CourseCode": "GEM1004", ID: "d0b1bc5e-88d2-4bdc-8979-775762c7a667"},
 				{"CourseCode": "IS1103", ID: "99f4d934-4b2b-4228-8bae-d6b77b25d550"},
 				{"CourseCode": "ST2334", ID: "2ae73642-83f7-4002-bc35-0e2d4ca1f433"}];
+
+function getStyleHeight(elem){
+	if(!elem.style.height) return 0;
+	return +/(\d+)/.exec(elem.style.height)[1];
+}
+
+function addToStyleHeight(elem, val){
+	elem.style.height = getStyleHeight(elem) + val;
+}
+
+function isAccordionDiv(elem){
+    return elem.tagName.toLowerCase() === "div" && elem.className.indexOf("accordion") === 0;
+}
+</script>
+
+<script>
+function makeDumbThreads(num){
+    var tmp = []
+    for(var i = 0; i < num; i++)
+        tmp.push(makeDumbThread());
+    return tmp;
+}
+
+//For each tab div.
+function makeDumbThread(){
+    //Give it a long enough value and you'll have Shakespeare
+    function randomString(length){
+        if(length < 2)
+            return "abcdefghijklmnopqrstuvwxyz,. "[Math.floor(Math.random() * 29)];
+        else
+            return randomString(1) + randomString(length - 1);
+    }
+    
+    var obj = {postbody: randomString(100), posttitle: "Thread title", postdate: "date when this was posted", poster: {Name: "John Brown"}, threads: []};
+    if(Math.random() < 0.2){
+        obj.threads = makeDumbThreads(Math.floor(Math.random()*2)+1);
+    }
+    return obj;
+}
+
+var forum = {title: "A Forum for a Module",
+             headings: [{title: "A Heading for a Forum", threads: []},
+                        {title: "A Second Heading for a Forum", threads: makeDumbThreads(10)}]};
+
+
+
+<!-- Show Forum Posts -->
+
+function updateUIForForum(forum){
+    var div = document.getElementById("forum_post_div");
+    
+    div.innerHTML = "";
+    //div.innerHTML = "Forum:" + forum.title;
+    addModuleForumViewToElement(div, forum);
+}
+
+function addModuleForumViewToElement(div, forum){
+    
+    var title = document.createElement("h2");
+    title.innerText = forum.title;
+    div.appendChild(title);
+    
+    for(var i = 0; i < forum.headings.length; i++){
+        var heading = forum.headings[i];
+        
+        //Make a single-category jQueryUI accordion for each heading.
+        var accordionDiv = document.createElement("div");
+        var headingID = forum.title + "-" + heading.title + i + "-accordion";
+        accordionDiv.id = headingID;
+        accordionDiv.className = "accordion";
+        
+        var headingTitle = document.createElement("h3");
+        headingTitle.innerHTML = "<a href=\"#\">" + heading.title + "</a>";
+        accordionDiv.appendChild(headingTitle);
+        
+        var headingPreviewDiv = document.createElement("div");
+        addThreadsToElement(headingPreviewDiv, heading.threads, 0);
+        headingPreviewDiv.id = headingID + "-preview-div";
+        accordionDiv.appendChild(headingPreviewDiv);
+        
+        div.appendChild(accordionDiv);
+        //div.appendChild(document.createElement("br"));
+    }
+    $( ".accordion" ).accordion({
+        collapsible: true
+    });
+}
+
+
+
+function addThreadsToElement(div, threads, indentLevel){
+    for(var i = 0; i < threads.length; i++){
+        addThreadToElement(div, threads[i], indentLevel);
+    }
+}
+
+
+
+function addThreadToElement(div, thread, indentLevel){
+    //{postbody: randomString(100), posttitle: "Thread title", postdate: "date when this was posted", poster: {Name: "John Brown"}, threads: []};
+    
+    //Again, use an accordion. Though I hope this doesn't look daft.
+    var accordionDiv = document.createElement("div");
+    accordionDiv.className = "accordion";
+    accordionDiv.id = "accordion_" + thread.title + indentLevel;
+    
+    var postTitle = document.createElement("h3");
+    postTitle.innerHTML = "<a href=\"#\">" + thread.posttitle + "</a>";
+    accordionDiv.appendChild(postTitle);
+    
+    var postPreviewDiv = document.createElement("div");
+    postPreviewDiv.innerHTML = thread.postbody; // "<p>" +  + "</p>";
+    
+    postPreviewDiv.onclick = function(){
+        ensureReplyDiv(postPreviewDiv);
+    }
+    
+    for(var i = 0; i < thread.threads.length; i++){
+        addThreadsToElement(postPreviewDiv, thread.threads, indentLevel + 1);
+    }
+    
+    accordionDiv.appendChild(postPreviewDiv);
+    
+    div.appendChild(accordionDiv);
+}
+
+</script>
+
+<!-- For jQuery UIs -->
+<script>
+
 
 //Generate tabs
 (function (){
@@ -137,55 +173,107 @@ var modules = [{"CourseCode": "CS1010R", ID: "a890a93c-22b2-42d1-8477-20204a3d13
   tabsDiv.appendChild(ul);
   
   for(var i = 0; i < modules.length; i++){
-	var module = modules[i];
-	var module_id = tabs_id + "-" + (i+1);
-	var li = document.createElement("li");
-	var a = document.createElement("a");
-	a.href = "#" + module_id;
-	a.innerHTML = module["CourseCode"];
-	li.appendChild(a);
-	ul.appendChild(li);
-	
-	var moduleDiv = document.createElement("div");
-	moduleDiv.id = module_id;
-	moduleDiv.innerHTML = "ID: " + module["ID"] + "<br>";
-	
-	addModuleForumViewToElement(moduleDiv, module);
-	
-	tabsDiv.appendChild(moduleDiv);
+    var module = modules[i];
+    var module_id = tabsDiv.id + "-" + (i+1);
+    
+    var li = document.createElement("li");
+    var a = document.createElement("a");
+    a.href = "#" + module_id;
+    
+    a.innerHTML = module["CourseCode"];
+    li.appendChild(a);
+    ul.appendChild(li); //append to ul tag.
+        
+    var moduleDiv = document.createElement("div");
+    moduleDiv.id = module_id;
+    moduleDiv.innerHTML = "ID: " + module["ID"] + "<br>";
+    
+    //addModuleForumViewToElement(moduleDiv, module);
+    a.onclick = (function(f){ return function(){
+        return updateUIForForum(f);
+    }; })(forum);//module.forums[0]
+    
+    tabsDiv.appendChild(moduleDiv);
   }
   
   div.appendChild(tabsDiv);
   
   
 $(function() {
-  $( "#" + tabs_id ).tabs();
+  $( "#" + tabs_id ).tabs({
+            collapsible: true
+        });
   });
   
-$( "#" + tabs_id ).bind( "tabsselect", function(event, ui) {
-  var div = ui.panel;
-  
-  for(var i = 0; i < div.children.length; i++){
-    if(div.children[i].className.indexOf("accordion") >= 0){
-		var accordion = div.children[i];
-		
-		console.log("style height:"+ accordion.children[1].style.height);
-		if(+/(\d+)/.exec(accordion.children[1].style.height)[1] < 1){
-			accordion.children[1].style.height = 57; //ARBITRARY..
-		}
-	}
-  }
-});
+// $( "#" + tabs_id ).bind( "tabsselect", function(event, ui) {
+  // var div = ui.panel;
+  // updateForumForModule(div);
+// });
   
 })();
 </script>
 
-	<script>
-	$(function() {
-		$( ".accordion" ).accordion({
-			collapsible: true
-		});
+<script>
+$(function() {
+	$( ".accordion" ).accordion({
+		collapsible: true
 	});
-	</script>
+});
+</script>
+
+
+<script>
+function makeReplyDiv(){
+    var div = document.createElement("div");
+    div.id = "reply_div";
+    div.style.verticalAlign = "top";
+    div.innerHTML = "Reply:";
+    
+    var text = document.createElement("textarea");
+    text.id = "reply_div_input";
+    text.rows = 3;
+    text.cols = 30;
+    div.appendChild(text);
+    
+    var postBtn = document.createElement("input");
+    postBtn.type = "button";
+    postBtn.value = "Reply";
+    
+    postBtn.onclick = function(){ console.log(text.value); };
+    
+    div.appendChild(postBtn);
+    
+    return div;
+}
+
+function hasReplyDiv(parent){
+    for(var i = 0; i < parent.children.length; i++){
+        if(parent.children[i].id === "reply_div"){
+            return true;
+        }
+    }
+    return false;
+}
+
+function ensureReplyDiv(parent){
+    if(!hasReplyDiv(parent)){
+        console.log("Make new reply div");
+        var d = makeReplyDiv()
+        for(var i = 0; i < parent.children.length; i++){
+            if(isAccordionDiv(parent.children[i])){
+                parent.insertBefore(d, parent.children[i]);
+            }
+        }
+        if(i === parent.children.length)
+            parent.appendChild(d);
+        addToStyleHeight(parent, d.offsetHeight);
+        // addToStyleHeight(parent.parentElement, d.offsetHeight);
+    } else {
+        console.log("No need to make new reply div");
+    }
+}
+
+</script>
+
 </body>
 </html>
